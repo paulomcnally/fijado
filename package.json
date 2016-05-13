@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
+  "bin": {
+   "fijado": "./bin/fijado"
+ },
   "directories": {
     "lib": "./lib/fijado"
   },
@@ -27,6 +30,7 @@
   "dependencies": {
     "async": "2.0.0-rc.4",
     "jsdom": "9.0.0",
+    "prompt": "1.0.0",
     "request": "2.72.0"
   },
   "devDependencies": {
