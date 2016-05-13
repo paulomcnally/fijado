@@ -16,6 +16,7 @@ describe('www.plataconplatica.com', function () {
         // result
         fijado.fetch((item) => {
           article = item;
+          console.log(`    ► ${article.title}`);
           done();
         });
       });

@@ -16,6 +16,7 @@ describe('www.hoy.com.ni', function () {
         // result
         fijado.fetch((item) => {
           article = item;
+          console.log(`    ► ${article.title}`);
           done();
         });
       });
