@@ -13,8 +13,8 @@ class Title {
   headerOneMethod($$) {
     let header1 = $$('h1');
     $$.each(header1, (i, item) => {
-      let isValid = $$(item).parent().is('div');
-      if (isValid) {
+      let isValid = ($$(item).parent().is('div') || $$(item).parent().is('header'));
+      if (isValid && !this.inBlackList($$, item)) {
         let title = $$(item).text();
         this.title = utiles.cleanText(title);
       }
@@ -29,14 +29,35 @@ class Title {
     if (utiles.isEmpty(this.title)) {
       let titles = $$("p[class*='title'],h1[class*='title']");
       $$.each(titles, (i, item) => {
-        let isValid = $$(item).text().split(' ').length > 2;
-        if (isValid) {
-          title = $$(item).text();
-        }
-      });
 
-      this.title = utiles.cleanText(title);
+        if (!this.inBlackList($$, item)) {
+          let isValid = $$(item).text().split(' ').length > 2;
+          if (isValid) {
+            title = $$(item).text();
+            this.title = utiles.cleanText(title);
+          }
+        };
+      });
     }
+  }
+
+  /**
+   * Ignore items with blackList class name
+   */
+  inBlackList($$, item) {
+    let inBlackList = false;
+    let classNames = $$(item).attr('class');
+    var blackList = [
+      'site-title',
+    ];
+
+    $$.each(classNames.split(' '), (i, item) => {
+      if (blackList.indexOf(item) !== -1) {
+        inBlackList = true;
+      }
+    });
+
+    return inBlackList;
   }
 
   /**
