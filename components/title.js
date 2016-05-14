@@ -1,3 +1,4 @@
+const Debug = require('debug')('fijado:title');
 const jsdom = require('jsdom');
 const Utiles = require('../lib/utiles');
 let utiles = new Utiles();
@@ -14,9 +15,11 @@ class Title {
     let header1 = $$('h1');
     $$.each(header1, (i, item) => {
       let isValid = ($$(item).parent().is('div') || $$(item).parent().is('header'));
-      if (isValid && !this.inBlackList($$, item)) {
-        let title = $$(item).text();
-        this.title = utiles.cleanText(title);
+      if (isValid && !this.inClassNameBlackList($$, item)) {
+        let title = utiles.cleanText($$(item).text());
+        this.title = title;
+        Debug(`Method: headerOneMethod`);
+        Debug(`Title: ${title}`);
       }
     });
   }
@@ -27,35 +30,82 @@ class Title {
   classNameMethod($$) {
     let title = '';
     if (utiles.isEmpty(this.title)) {
-      let titles = $$("p[class*='title'],h1[class*='title']");
-      $$.each(titles, (i, item) => {
+      var elements = $$('[class*="title"]');
 
-        if (!this.inBlackList($$, item)) {
+      $$.each(elements, (i, item) => {
+        let inClassNameBlackList = this.inClassNameBlackList($$, item);
+        let inTagBlackList = this.inTagBlackList($$, item);
+
+        if (!inClassNameBlackList && !inTagBlackList) {
           let isValid = $$(item).text().split(' ').length > 2;
           if (isValid) {
-            title = $$(item).text();
-            this.title = utiles.cleanText(title);
+            title = utiles.cleanText($$(item).text());
+            this.title = title;
+            Debug(`Method: classNameMethod 1`);
+            Debug(`Title: ${title}`);
           }
         };
       });
+
+      // Example:
+      // https://jsfiddle.net/Lkh6nnk3/
+      if (utiles.isEmpty(this.title)) {
+        $$.each(elements, (i, item) => {
+          let inClassNameBlackList = this.inClassNameBlackList($$, item);
+          let inTagBlackList = this.inTagBlackList($$, item);
+
+          if (!inClassNameBlackList && !inTagBlackList) {
+            let isValid = $$(item).next().text().split(' ').length > 2;
+            if (isValid) {
+              title = utiles.cleanText($$(item).next().text());
+              this.title = title;
+              Debug(`Method: classNameMethod 2`);
+              Debug(`Title: ${title}`);
+            }
+          };
+        });
+      }
     }
   }
 
   /**
    * Ignore items with blackList class name
    */
-  inBlackList($$, item) {
+  inClassNameBlackList($$, item) {
     let inBlackList = false;
     let classNames = $$(item).attr('class');
     var blackList = [
       'site-title',
+      'reply-title',
+      'comment-reply-title',
     ];
 
-    $$.each(classNames.split(' '), (i, item) => {
-      if (blackList.indexOf(item) !== -1) {
-        inBlackList = true;
-      }
-    });
+    if (classNames !== undefined) {
+      $$.each(classNames.split(' '), (i, item) => {
+        if (blackList.indexOf(item) !== -1) {
+          inBlackList = true;
+        }
+      });
+    }
+
+    Debug(`inClassNameBlackList: ${inBlackList}`);
+
+    return inBlackList;
+  }
+
+  inTagBlackList($$, item) {
+    let inBlackList = false;
+    let tagName = $$(item).prop('tagName');
+    var blackList = [
+      'A',
+      'DIV',
+    ];
+
+    if (blackList.indexOf(tagName) !== -1) {
+      inBlackList = true;
+    }
+
+    Debug(`inTagBlackList: ${inBlackList}`);
 
     return inBlackList;
   }

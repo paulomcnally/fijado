@@ -1,26 +1,16 @@
 #!/usr/bin/env node
 
-var command = (process.argv[2]) ? process.argv[2] : null;
-var commands = ['fetch'];
+var url = (process.argv[2]) ? process.argv[2] : null;
 
 var cli = require('../lib/cli');
 
 /**
  * Error
- * command is null
+ * url is null
  */
-if (!command) {
+if (!url) {
   cli.error(0);
   process.exit(0);
 }
 
-/**
- * Error
- * command don't exist in applications
- */
-if ((commands.indexOf(command) != -1) === false) {
-  cli.error(1);
-  process.exit(1);
-}
-
-cli[command]();
+cli.fetch(url);
