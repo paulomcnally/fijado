@@ -78,6 +78,7 @@ class Title {
       'site-title',
       'reply-title',
       'comment-reply-title',
+      'modal-title',
     ];
 
     if (classNames !== undefined) {
